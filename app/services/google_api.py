@@ -21,10 +21,7 @@ async def spreadsheets_create(wrapper_services: Aiogoogle) -> str:
                 'sheetType': 'GRID',
                 'sheetId': 0,
                 'title': 'Лист1',
-                'gridProperties': {
-                    'rowCount': 100,
-                    'columnCount': 10
-                }
+                'gridProperties': {'rowCount': 100, 'columnCount': 10}
             }
         }]
     }
@@ -39,9 +36,11 @@ async def set_user_permissions(
     spreadsheet_id: str,
     wrapper_services: Aiogoogle
 ) -> None:
-    body = {'type': 'user',
-                        'role': 'writer',
-                        'emailAddress': settings.email}
+    body = {
+        'type': 'user',
+        'role': 'writer',
+        'emailAddress': settings.email
+    }
     service = await wrapper_services.discover('drive', 'v3')
     await wrapper_services.as_service_account(
         service.permissions.create(
