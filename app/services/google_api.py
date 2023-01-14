@@ -6,6 +6,20 @@ from app.core.config import settings
 from app.models import CharityProject
 
 FORMAT = '%Y/%m/%d %H:%M:%S'
+SHEET_TYPE = 'GRID'
+LOCALE = 'ru_RU'
+SHEET_ID = 0
+TITLE = 'Лист1'
+ROW_COUNT = 100
+COLUMN_COUNT = 10
+
+TYPE = 'user'
+ROLE = 'writer'
+EMAIL = settings.email
+
+MAJOR_DIMENSION = 'ROWS'
+RANGE = 'A1:E30'
+VALUE_INPUT_OPTION = 'USER_ENTERED'
 
 
 async def spreadsheets_create(wrapper_services: Aiogoogle) -> str:
@@ -14,14 +28,16 @@ async def spreadsheets_create(wrapper_services: Aiogoogle) -> str:
     body = {
         'properties': {
             'title': f'Отчёт от {now_date_time}',
-            'locale': 'ru_RU'
+            'locale': LOCALE
         },
         'sheets': [{
             'properties': {
-                'sheetType': 'GRID',
-                'sheetId': 0,
-                'title': 'Лист1',
-                'gridProperties': {'rowCount': 100, 'columnCount': 10}
+                'sheetType': SHEET_TYPE,
+                'sheetId': SHEET_ID,
+                'title': TITLE,
+                'gridProperties': {
+                    'rowCount': ROW_COUNT, 'columnCount': COLUMN_COUNT
+                }
             }
         }]
     }
@@ -37,9 +53,9 @@ async def set_user_permissions(
     wrapper_services: Aiogoogle
 ) -> None:
     body = {
-        'type': 'user',
-        'role': 'writer',
-        'emailAddress': settings.email
+        'type': TYPE,
+        'role': ROLE,
+        'emailAddress': EMAIL
     }
     service = await wrapper_services.discover('drive', 'v3')
     await wrapper_services.as_service_account(
@@ -73,14 +89,14 @@ async def spreadsheets_update_value(
         table_values.append(new_row)
 
     update_body = {
-        'majorDimension': 'ROWS',
+        'majorDimension': MAJOR_DIMENSION,
         'values': table_values
     }
     await wrapper_services.as_service_account(
         service.spreadsheets.values.update(
             spreadsheetId=spreadsheet_id,
-            range='A1:E30',
-            valueInputOption='USER_ENTERED',
+            range=RANGE,
+            valueInputOption=VALUE_INPUT_OPTION,
             json=update_body
         )
     )
